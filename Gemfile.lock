@@ -53,6 +53,8 @@ GEM
       treetop (~> 1.4.0)
     logstash-filter-clone (0.1.5)
       logstash-core (>= 1.4.0, < 2.0.0)
+    logstash-filter-drop (0.1.5)
+      logstash-core (>= 1.4.0, < 2.0.0)
     logstash-filter-grok (0.1.9)
       jls-grok (~> 0.11.1)
       logstash-core (>= 1.4.0, < 2.0.0)
@@ -130,6 +132,7 @@ DEPENDENCIES
   logstash-codec-json
   logstash-core
   logstash-filter-clone
+  logstash-filter-drop
   logstash-filter-json
   logstash-filter-mutate
   logstash-input-file
