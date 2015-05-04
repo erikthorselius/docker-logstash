@@ -57,6 +57,8 @@ GEM
       jls-grok (~> 0.11.1)
       logstash-core (>= 1.4.0, < 2.0.0)
       logstash-patterns-core
+    logstash-filter-json (0.1.6)
+      logstash-core (>= 1.4.0, < 2.0.0)
     logstash-filter-mutate (0.1.7)
       logstash-core (>= 1.4.0, < 2.0.0)
       logstash-filter-grok
@@ -128,6 +130,7 @@ DEPENDENCIES
   logstash-codec-json
   logstash-core
   logstash-filter-clone
+  logstash-filter-json
   logstash-filter-mutate
   logstash-input-file
   logstash-input-generator
