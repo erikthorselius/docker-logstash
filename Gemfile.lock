@@ -65,6 +65,8 @@ GEM
       logstash-core (>= 1.4.0, < 2.0.0)
       logstash-filter-grok
       logstash-patterns-core
+    logstash-filter-range (0.1.5)
+      logstash-core (>= 1.4.0, < 2.0.0)
     logstash-input-file (0.1.9)
       addressable
       filewatch (~> 0.6, >= 0.6.2)
@@ -135,6 +137,7 @@ DEPENDENCIES
   logstash-filter-drop
   logstash-filter-json
   logstash-filter-mutate
+  logstash-filter-range
   logstash-input-file
   logstash-input-generator
   logstash-input-stdin
