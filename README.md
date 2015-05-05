@@ -1,5 +1,5 @@
 # docker-logstash
-Logstash 1.5.0-RC3 with added gemfiles. 
+Logstash 1.5.0-RC3 with added gemfiles. Observe that a local Gemfile. It is https://github.com/RallySoftware/logstash-output-sqs added manually, have a look in the Gemfile. 
 
 ## Build and run 
 ```
