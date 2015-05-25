@@ -66,6 +66,11 @@ GEM
       treetop (~> 1.4.0)
     logstash-filter-clone (0.1.5)
       logstash-core (>= 1.4.0, < 2.0.0)
+    logstash-filter-date (0.1.6)
+      logstash-codec-json
+      logstash-core (>= 1.4.0, < 2.0.0)
+      logstash-input-generator
+      logstash-output-null
     logstash-filter-drop (0.1.5)
       logstash-core (>= 1.4.0, < 2.0.0)
     logstash-filter-grok (0.1.9)
@@ -106,6 +111,12 @@ GEM
       aws-sdk (~> 1.61.0)
       logstash-codec-plain
       logstash-core (>= 1.4.0, < 2.0.0)
+    logstash-output-null (0.1.4)
+      logstash-core (>= 1.4.0, < 2.0.0)
+    logstash-output-s3 (0.1.7)
+      logstash-core (>= 1.4.0, < 2.0.0)
+      logstash-mixin-aws
+      stud (~> 0.0.18)
     logstash-output-stdout (0.1.5)
       logstash-codec-line
       logstash-core (>= 1.4.0, < 2.0.0)
@@ -145,6 +156,7 @@ DEPENDENCIES
   logstash-codec-rubydebug
   logstash-core
   logstash-filter-clone
+  logstash-filter-date
   logstash-filter-drop
   logstash-filter-json
   logstash-filter-mutate
@@ -153,5 +165,6 @@ DEPENDENCIES
   logstash-input-sqs
   logstash-input-stdin
   logstash-input-tcp
+  logstash-output-s3
   logstash-output-sqs (= 0.1.3)!
   logstash-output-stdout
