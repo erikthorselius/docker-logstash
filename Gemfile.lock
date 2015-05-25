@@ -86,6 +86,10 @@ GEM
     logstash-input-generator (0.1.5)
       logstash-codec-plain
       logstash-core (>= 1.4.0, < 2.0.0)
+    logstash-input-sqs (0.1.4)
+      aws-sdk
+      logstash-codec-json
+      logstash-core (>= 1.4.0, < 2.0.0)
     logstash-input-stdin (0.1.5)
       logstash-codec-json
       logstash-codec-json_lines
@@ -146,6 +150,7 @@ DEPENDENCIES
   logstash-filter-mutate
   logstash-input-file
   logstash-input-generator
+  logstash-input-sqs
   logstash-input-stdin
   logstash-input-tcp
   logstash-output-sqs (= 0.1.3)!
