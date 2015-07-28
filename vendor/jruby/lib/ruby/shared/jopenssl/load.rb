@@ -1,22 +1,25 @@
-unless defined? JRUBY_VERSION
-  warn 'Loading jruby-openssl in a non-JRuby interpreter'
-end
+warn 'Loading jruby-openssl in a non-JRuby interpreter' unless defined? JRUBY_VERSION
 
+require 'java'
 require 'jopenssl/version'
+
+version = Jopenssl::Version::BOUNCY_CASTLE_VERSION
+bc_jars = nil
 begin
   # if we have jar-dependencies we let it track the jars
-  require 'jar-dependencies'
-  require_jar( 'org.bouncycastle', 'bcpkix-jdk15on', Jopenssl::Version::BOUNCY_CASTLE_VERSION )
-  require_jar( 'org.bouncycastle', 'bcprov-jdk15on', Jopenssl::Version::BOUNCY_CASTLE_VERSION )
+  require_jar( 'org.bouncycastle', 'bcpkix-jdk15on', version )
+  require_jar( 'org.bouncycastle', 'bcprov-jdk15on', version )
+  bc_jars = true
 rescue LoadError
-  require "org/bouncycastle/bcpkix-jdk15on/#{Jopenssl::Version::BOUNCY_CASTLE_VERSION}/bcpkix-jdk15on-#{Jopenssl::Version::BOUNCY_CASTLE_VERSION}.jar"
-  require "org/bouncycastle/bcprov-jdk15on/#{Jopenssl::Version::BOUNCY_CASTLE_VERSION}/bcprov-jdk15on-#{Jopenssl::Version::BOUNCY_CASTLE_VERSION}.jar"
+end if defined?(Jars) && ( ! Jars.skip? ) rescue nil
+unless bc_jars
+  load "org/bouncycastle/bcpkix-jdk15on/#{version}/bcpkix-jdk15on-#{version}.jar"
+  load "org/bouncycastle/bcprov-jdk15on/#{version}/bcprov-jdk15on-#{version}.jar"
 end
 
-# Load extension
 require 'jruby'
 require 'jopenssl.jar'
-org.jruby.ext.openssl.OSSLLibrary.new.load(JRuby.runtime, false)
+org.jruby.ext.openssl.OpenSSL.load(JRuby.runtime)
 
 if RUBY_VERSION >= '2.1.0'
   load('jopenssl21/openssl.rb')

@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
   s.licenses = ["Ruby"]
   s.rdoc_options = ["--main", "NEWS.rdoc"]
   s.rubyforge_project = "bindata"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "A declarative way to read and write binary file formats"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

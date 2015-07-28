@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.description = "lumberjack log transport library"
   s.email = ["jls@semicomplete.com"]
   s.homepage = "https://github.com/jordansissel/lumberjack"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "lumberjack log transport library"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 end

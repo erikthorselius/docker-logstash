@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/toolmantim/user_agent_parser"
   s.licenses = ["MIT"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.8.7")
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "A simple, comprehensive Ruby gem for parsing user agent strings with the help of BrowserScope's UA database"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 end

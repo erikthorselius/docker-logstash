@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--line-numbers", "--show-hash", "--main", "README.rdoc", "--title", "Rake -- Ruby Make"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.8.6")
   s.rubyforge_project = "rake"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "Ruby based make-like utility."
 
   if s.respond_to? :specification_version then

@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.homepage = "http://nokogiri.org"
   s.licenses = ["MIT"]
   s.rdoc_options = ["--main", "README.rdoc"]
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "Nokogiri (\u{92f8}) is an HTML, XML, SAX, and Reader parser"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

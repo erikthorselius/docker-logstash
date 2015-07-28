@@ -14,10 +14,10 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/chuckremes/ffi-rzmq"
   s.licenses = ["MIT"]
   s.rubyforge_project = "ffi-rzmq"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "This gem wraps the ZeroMQ (0mq) networking library using Ruby FFI (foreign function interface)."
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

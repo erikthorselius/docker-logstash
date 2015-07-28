@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
   s.email = ["theo@burtcorp.com", "michael@rabbitmq.com"]
   s.homepage = "http://rubymarchhare.info"
   s.rubyforge_project = "march_hare"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "RabbitMQ client for JRuby built around the official RabbitMQ Java client"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 end

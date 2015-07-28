@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.files = ["bin/make_data.rb", "bin/sample"]
   s.homepage = "http://github.com/enebo/jruby-win32ole"
   s.rubyforge_project = "jruby-win32ole"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "A Gem for win32ole support on JRuby"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 end

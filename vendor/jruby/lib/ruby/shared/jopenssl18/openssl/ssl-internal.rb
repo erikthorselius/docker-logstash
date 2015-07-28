@@ -19,34 +19,6 @@ require "fcntl"
 
 module OpenSSL
   module SSL
-    class SSLContext
-      DEFAULT_PARAMS = {
-        :ssl_version => "SSLv23",
-        :verify_mode => OpenSSL::SSL::VERIFY_PEER,
-        :ciphers => "ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW",
-        :options => OpenSSL::SSL::OP_ALL,
-      }
-
-      DEFAULT_CERT_STORE = OpenSSL::X509::Store.new
-      DEFAULT_CERT_STORE.set_default_paths
-      if defined?(OpenSSL::X509::V_FLAG_CRL_CHECK_ALL)
-        DEFAULT_CERT_STORE.flags = OpenSSL::X509::V_FLAG_CRL_CHECK_ALL
-      end
-
-      def set_params(params={})
-        params = DEFAULT_PARAMS.merge(params)
-        # ssl_version need to be set at first.
-        self.ssl_version = params.delete(:ssl_version)
-        params.each{|name, value| self.__send__("#{name}=", value) }
-        if self.verify_mode != OpenSSL::SSL::VERIFY_NONE
-          unless self.ca_file or self.ca_path or self.cert_store
-            self.cert_store = DEFAULT_CERT_STORE
-          end
-        end
-        return params
-      end
-    end
-
     module SocketForwarder
       def addr
         to_io.addr
@@ -95,7 +67,11 @@ module OpenSSL
             should_verify_common_name = false
             reg = Regexp.escape($1).gsub(/\\\*/, "[^.]+")
             return true if /\A#{reg}\z/i =~ hostname
-          elsif /\AIP Address:(.*)/ =~ general_name
+          # NOTE: somehow we need the IP: canonical form
+          # seems there were failures elsewhere when not
+          # not sure how that's possible possible to-do!
+          elsif /\AIP(?: Address)?:(.*)/ =~ general_name
+          #elsif /\AIP Address:(.*)/ =~ general_name
             should_verify_common_name = false
             return true if $1 == hostname
           end

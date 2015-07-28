@@ -15,10 +15,10 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/joekiller/jruby-kafka"
   s.licenses = ["Apache 2.0"]
   s.requirements = ["jar 'org.apache.kafka:kafka_2.10', '0.8.2.1'", "jar 'org.slf4j:slf4j-log4j12', '1.7.10'"]
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "jruby Kafka wrapper"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

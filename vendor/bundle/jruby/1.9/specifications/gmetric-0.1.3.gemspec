@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/igrigorik/gmetric"
   s.rdoc_options = ["--charset=UTF-8"]
   s.rubyforge_project = "gmetric"
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.4.6"
   s.summary = "Pure Ruby interface for generating Ganglia gmetric packets"
 
-  s.installed_by_version = "2.4.5" if s.respond_to? :installed_by_version
+  s.installed_by_version = "2.4.6" if s.respond_to? :installed_by_version
 end

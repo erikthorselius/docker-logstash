@@ -18,36 +18,49 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-
 module Jars
-  HOME = 'JARS_HOME'.freeze
-  MAVEN_SETTINGS = 'JARS_MAVEN_SETTINGS'.freeze
-  SKIP = 'JARS_SKIP'.freeze
-  NO_REQUIRE = 'JARS_NO_REQUIRE'.freeze
-  QUIET = 'JARS_QUIET'.freeze
-  VERBOSE = 'JARS_VERBOSE'.freeze
-  DEBUG = 'JARS_DEBUG'.freeze
-  VENDOR = 'JARS_VENDOR'.freeze
+  unless defined? Jars::MAVEN_SETTINGS
+    MAVEN_SETTINGS = 'JARS_MAVEN_SETTINGS'.freeze
+    LOCAL_MAVEN_REPO = 'JARS_LOCAL_MAVEN_REPO'.freeze
+    # lock file to use
+    LOCK = 'JARS_LOCK'.freeze
+    # where the locally stored jars are search for or stored
+    HOME = 'JARS_HOME'.freeze
+    # skip the gem post install hook
+    SKIP = 'JARS_SKIP'.freeze
+    # just do not require any jars
+    NO_REQUIRE = 'JARS_NO_REQUIRE'.freeze
+    # no more warnings on conflict. this still requires jars but will
+    # not warn. it is needed to load jars from (default) gems which
+    # do contribute to any dependency manager (maven, gradle, jbundler)
+    QUIET = 'JARS_QUIET'.freeze
+    # show maven output
+    VERBOSE = 'JARS_VERBOSE'.freeze
+    # maven debug
+    DEBUG = 'JARS_DEBUG'.freeze
+    # vendor jars inside gem when installing gem
+    VENDOR = 'JARS_VENDOR'.freeze
+    # resolve jars from Jars.lock
+    RESOLVE = 'JARS_RESOLVE'.freeze
+  end
 
   class << self
 
     if defined? JRUBY_VERSION
       def to_prop( key )
-        java.lang.System.getProperty( key.downcase.gsub( /_/, '.' ) ) ||
-          ENV[ key.upcase.gsub( /[.]/, '_' ) ]
+        key = key.gsub( '_', '.' )
+        ENV_JAVA[ ( key.downcase!; key ) ] ||
+          ENV[ ( key.gsub!( '.', '_' ); key.upcase!; key ) ]
       end
     else
       def to_prop( key )
-        ENV[ key.upcase.gsub( /[.]/, '_' ) ]
+        ENV[ key.gsub( '.', '_' ).upcase ]
       end
     end
 
     def to_boolean( key )
       prop = to_prop( key )
-      # prop == nil => false
-      # prop == 'false' => false
-      # anything else => true
-      prop == '' or prop == 'true'
+      ! prop.nil? && ( prop.empty? || prop.eql?('true') )
     end
 
     def skip?
@@ -55,11 +68,11 @@ module Jars
     end
 
     def no_require?
-      to_boolean( NO_REQUIRE )
+      ( @frozen ||= false ) || to_boolean( NO_REQUIRE )
     end
 
     def quiet?
-      to_boolean( QUIET )
+      ( @silent ||= false ) || to_boolean( QUIET )
     end
 
     def verbose?
@@ -74,8 +87,24 @@ module Jars
       to_boolean( VENDOR )
     end
 
+    def resolve?
+      to_boolean( RESOLVE )
+    end
+
+    def no_more_warnings
+      @silent = true
+    end
+
     def freeze_loading
-      ENV[ NO_REQUIRE ] = 'true'
+      @frozen = true
+    end
+
+    def lock
+      to_prop( LOCK ) || 'Jars.lock'
+    end
+
+    def local_maven_repo
+      to_prop( LOCAL_MAVEN_REPO ) || home
     end
 
     def reset
@@ -84,9 +113,11 @@ module Jars
     end
 
     def maven_user_settings
-      if @_jars_maven_user_settings_.nil?
+      unless instance_variable_defined?(:@_jars_maven_user_settings_)
+        @_jars_maven_user_settings_ = nil
+      end
+      if ( @_jars_maven_user_settings_ ||= nil ).nil?
         if settings = absolute( to_prop( MAVEN_SETTINGS ) )
-          settings = File.expand_path(settings)
           unless File.exists?(settings)
             warn "configured ENV['#{MAVEN_SETTINGS}'] = '#{settings}' not found" unless quiet?
             settings = false
@@ -102,6 +133,9 @@ module Jars
     alias maven_settings maven_user_settings
 
     def maven_global_settings
+      unless instance_variable_defined?(:@_jars_maven_global_settings_)
+        @_jars_maven_global_settings_ = nil
+      end
       if @_jars_maven_global_settings_.nil?
           if mvn_home = ENV[ 'M2_HOME' ] || ENV[ 'MAVEN_HOME' ]
             settings = File.join( mvn_home, 'conf/settings.xml' )
@@ -115,7 +149,7 @@ module Jars
     end
 
     def home
-      if @_jars_home_.nil?
+      if ( @_jars_home_ ||= nil ).nil?
         unless @_jars_home_ = absolute( to_prop( HOME ) )
           begin
             if user_settings = maven_user_settings
@@ -133,13 +167,35 @@ module Jars
       @_jars_home_
     end
 
+    def require_jars_lock!( scope = :runtime )
+      # funny error during spec where it tries to load it again
+      # and finds it as gem instead of the LOAD_PATH
+      require 'jars/classpath' unless defined? Jars::Classpath
+      classpath = Jars::Classpath.new
+      if jars_lock = classpath.jars_lock
+        @@jars_lock = jars_lock
+        classpath.require( scope )
+        no_more_warnings
+      end
+    end
+
+    def require_jars_lock
+      @@jars_lock ||= false
+      unless @@jars_lock
+        require_jars_lock!
+        @@jars_lock ||= true
+      end
+    end
+
     def require_jar( group_id, artifact_id, *classifier_version )
+      require_jars_lock
+
       version = classifier_version[ -1 ]
       classifier = classifier_version[ -2 ]
 
       @@jars ||= {}
       coordinate = "#{group_id}:#{artifact_id}"
-      coordinate += ":#{classifier}" if classifier
+      coordinate << ":#{classifier}" if classifier
       if @@jars.key? coordinate
         if @@jars[ coordinate ] == version
           false
@@ -170,19 +226,22 @@ module Jars
       end
     end
 
-    def detect_local_repository(settings); require 'rexml/document'
-      doc = REXML::Document.new( File.read( settings ) )
-      if local_repo = doc.root.elements['localRepository']
-        if ( local_repo = local_repo.first )
-          local_repo = local_repo.value
-          local_repo = nil if local_repo.empty?
-        end
+    def detect_local_repository(settings)
+      doc = File.read( settings )
+      # TODO filter out xml comments
+      local_repo = doc.sub( /<\/localRepository>.*/m, '' ).sub( /.*<localRepository>/m, '' )
+      # replace maven like system properties embedded into the string
+      local_repo.gsub!( /\$\{[a-zA-Z.]+\}/ ) do |a|
+        ENV_JAVA[ a[2..-2] ] || a
+      end
+      if local_repo.empty? or not File.exists?( local_repo )
+        local_repo = nil
       end
       local_repo
     end
 
-    def to_jar( group_id, artifact_id, version, classifier )
-      file = "#{group_id.gsub( /\./, '/' )}/#{artifact_id}/#{version}/#{artifact_id}-#{version}"
+    def to_jar( group_id, artifact_id, version, classifier = nil )
+      file = "#{group_id.gsub( '.', '/' )}/#{artifact_id}/#{version}/#{artifact_id}-#{version}"
       file << "-#{classifier}" if classifier
       file << '.jar'
       file
@@ -199,7 +258,7 @@ module Jars
         require jar
       end
     rescue LoadError => e
-      raise "\n\n\tyou might need to reinstall the gem which depends on the missing jar\n\n" + e.message + " (LoadError)"
+      raise "\n\n\tyou might need to reinstall the gem which depends on the missing jar or in case there is Jars.lock then JARS_RESOLVE=true will install the missing jars\n\n" + e.message + " (LoadError)"
     end
 
   end # class << self
