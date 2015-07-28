@@ -3,8 +3,8 @@ Logstash 1.5.0-RC3 with added gemfiles. Observe that a local Gemfile. It is http
 
 ## Build and run 
 ```
-docker build . -name logstash
-docker run logstash 
+docker build -t logstash .
+docker run -v /path/to/logstash.conf:/tmp/logstash.conf logstash -f /tmp/logstash.conf
 ```
 ## Add plugin
 Add your plugin to Gemfile and run `bundle install`. Then checkin Gemfile and Gemfile.lock.
